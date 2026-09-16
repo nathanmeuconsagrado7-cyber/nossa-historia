@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nossa História ❤️</title>
+  <style>
+    :root {
+      --accent-color: #ff4b5c;
+      --text-color: #2b2b2b;
+      --bg-color: #faf5f5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Georgia', serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* --- TELA DE ENTRADA (LIBERA A MÚSICA) --- */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20000;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    #overlay h2 {
+      font-size: 2rem;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+    }
+
+    #overlay p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 25px;
+      font-style: italic;
+    }
+
+    .start-btn {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 15px 35px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 75, 92, 0.4);
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.05);
+      background: #e03e4e;
+    }
+
+    /* --- GAROA DE CORAÇÕES --- */
+    .heart-drizzle {
+      position: fixed;
+      top: -20px;
+      font-size: 14px;
+      color: var(--accent-color);
+      user-select: none;
+      pointer-events: none;
+      z-index: 9999;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* --- BOTÃO DE MÚSICA FLUTUANTE --- */
+    .music-player {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10000;
+    }
+
+    .music-btn {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 75, 92, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.05);
+      background: #e03e4e;
+    }
+
+    /* Cabeçalho de Abertura */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #ffe6e8 0%, #fff5f5 100%);
+      padding: 20px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      color: var(--accent-color);
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #666;
+      font-style: italic;
+    }
+
+    .scroll-down {
+      margin-top: 40px;
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    /* Seções da História */
+    .story-section {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .story-container {
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s ease-out;
+    }
+
+    .story-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .story-section:nth-child(even) .story-container {
+      flex-direction: row-reverse;
+    }
+
+    .story-image {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .story-image img,
+    .story-image video {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .story-text {
+      flex: 1;
+    }
+
+    .chapter-tag {
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-color);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .story-text h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: #1a1a1a;
+    }
+
+    .story-text p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #555;
+    }
+
+    /* Seção Final */
+    .final-section {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: white;
+      padding: 40px 20px;
+    }
+
+    .final-section h2 {
+      font-size: 2.2rem;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+    }
+
+    .final-section p {
+      max-width: 600px;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #444;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: #999;
+      background: #faf5f5;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .story-container, 
+      .story-section:nth-child(even) .story-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+      .story-image img,
+      .story-image video { height: 280px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tela de Abertura para liberar o áudio -->
+  <div id="overlay">
+    <h2>Prepare o som... 🎧</h2>
+    <p>Tenho uma surpresinha especial para você.</p>
+    <button class="start-btn" onclick="startExperience()">Abrir Surpresa ❤️</button>
+  </div>
+
+  <!-- Player de Música Flutuante -->
+  <div class="music-player">
+    <button class="music-btn" onclick="toggleMusic()" id="musicToggleBtn">
+      Pausar Música ⏸️
+    </button>
+  </div>
+
+  <!-- Elemento de Áudio -->
+  <audio id="bgMusic" loop>
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Abertura -->
+  <section class="hero">
+    <h1>Nossa Historinha ❤️</h1>
+    <p>Role a tela para ler...</p>
+    <div class="scroll-down">↓</div>
+  </section>
+
+  <!-- Capítulo 1 -->
+  <section class="story-section">
+    <div class="story-container">
+      <div class="story-image">
+        <img src="foto1.jpeg" alt="Como nos conhecemos">
+      </div>
+      <div class="story-text">
+        <div class="chapter-tag">Capítulo I</div>
+        <h2>O Começo de Tudo</h2>
+        <p>Era para ser só mais uma troca de olhares, mas acabou se tornando mais que isso. Acabou se tornando o inicio de uma das melhores coisas que aconteceram na minha vida.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capítulo 2 (VÍDEO) -->
+  <section class="story-section">
+    <div class="story-container">
+      <div class="story-image">
+        <video autoplay loop muted playsinline>
+          <source src="video.mp4" type="video/mp4">
+          Seu navegador não suporta vídeos.
+        </video>
+      </div>
+      <div class="story-text">
+        <div class="chapter-tag">Capítulo II</div>
+        <h2>Descobrindo Você</h2>
+        <p>Aos poucos, o jeito que você me trata, a forma com que me olha e se importa comigo e aqueles detalhes únicos que você tem, me fizeram gostar cada vez mais do seu jeito de ver e viver a vida.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capítulo 3 -->
+  <section class="story-section">
+    <div class="story-container">
+      <div class="story-image">
+        <img src="foto3.jpeg" alt="Nossos momentos">
+      </div>
+      <div class="story-text">
+        <div class="chapter-tag">Capítulo III</div>
+        <h2>Construindo Nosso Lugar</h2>
+        <p>Entre risadas e dias especiais, fomos criando um espaço só nosso no mundo. Cada momento ao seu lado, cada risada, cada carinho, virou uma lembrança que guardo com carinho.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mensagem Final -->
+  <section class="final-section">
+    <h2>E a história continua...</h2>
+    <p>A melhor parte de tudo isso é saber que esse é só o início das muitas páginas que ainda vamos escrever juntos. Te amo Neneca!</p>
+  </section>
+
+  <footer>
+    <p>Feito com carinho para você ❤️</p>
+  </footer>
+
+  <script>
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicToggleBtn');
+    let isPlaying = false;
+
+    // --- FUNÇÃO PARA INICIAR AO CLICAR NO BOTÃO DA TELA INICIAL ---
+    function startExperience() {
+      // Esconde a tela de aviso
+      document.getElementById('overlay').classList.add('hidden');
+      
+      // Toca a música automaticamente
+      music.play();
+      isPlaying = true;
+      musicBtn.innerHTML = 'Pausar Música ⏸️';
+    }
+
+    // --- GAROA DE CORAÇÕES ---
+    function createHeartDrizzle() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart-drizzle');
+      heart.innerText = '❤️';
+      
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (Math.random() * 10 + 10) + 'px';
+      heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+      heart.style.opacity = Math.random() * 0.7 + 0.3;
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 6000);
+    }
+
+    setInterval(createHeartDrizzle, 150);
+
+    // --- CONTROLE PAUSAR / TOCAR MÚSICA ---
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        musicBtn.innerHTML = '🎵 Tocar Música';
+      } else {
+        music.play();
+        musicBtn.innerHTML = 'Pausar Música ⏸️';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    // --- ANIMAÇÃO DE ROLAGEM DOS CAPÍTULOS ---
+    const containers = document.querySelectorAll('.story-container');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.2 });
+
+    containers.forEach(container => observer.observe(container));
+  </script>
+
+</body>
+</html>
